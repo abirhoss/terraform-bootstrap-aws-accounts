@@ -1,0 +1,183 @@
+image: hashicorp/terraform:0.13.5
+
+pipelines:
+
+  default:
+      # qa account plan and apply
+      - step:
+          name: terraform plan QA
+          script:
+            - ./bin/terraform_plan.sh qa
+          artifacts:
+            - terraform/accounts/qa/.terraform/**
+            - terraform/terraform_plan/**
+      - step:
+          name: terraform apply QA
+          trigger: manual
+          script:
+            - ./bin/terraform_apply.sh qa
+
+  custom:
+
+    #
+    # All accounts
+    #
+
+    all:
+
+      # Terraform Plan
+
+      - parallel:
+        # master account plan
+        - step:
+            name: terraform plan Master
+            script:
+              - ./bin/terraform_plan.sh master
+            artifacts:
+              - terraform/accounts/master/.terraform/**
+              - terraform/terraform_plan/**
+        # shared services account plan
+        - step:
+            name: terraform plan Shared Services
+            script:
+              - ./bin/terraform_plan.sh shared_services
+            artifacts:
+              - terraform/accounts/shared_services/.terraform/**
+              - terraform/terraform_plan/**
+        # qa account plan
+        - step:
+            name: terraform plan QA
+            script:
+              - ./bin/terraform_plan.sh qa
+            artifacts:
+              - terraform/accounts/qa/.terraform/**
+              - terraform/terraform_plan/**
+        # staging account plan
+        - step:
+            name: terraform plan Staging
+            script:
+              - ./bin/terraform_plan.sh staging
+            artifacts:
+              - terraform/accounts/staging/.terraform/**
+              - terraform/terraform_plan/**
+        # production account plan
+        - step:
+            name: terraform plan Production
+            script:
+              - ./bin/terraform_plan.sh production
+            artifacts:
+              - terraform/accounts/production/.terraform/**
+              - terraform/terraform_plan/**
+          
+      # Terraform Apply
+      
+      # master account apply
+      - step:
+          name: terraform apply Master
+          trigger: manual
+          script:
+            - ./bin/terraform_apply.sh master
+      # shared services account apply
+      - step:
+          name: terraform apply Shared Services
+          trigger: manual
+          script:
+            - ./bin/terraform_apply.sh shared_services
+      # qa account apply
+      - step:
+          name: terraform apply QA
+          trigger: manual
+          script:
+            - ./bin/terraform_apply.sh qa
+      # staging account apply
+      - step:
+          name: terraform apply Staging
+          trigger: manual
+          script:
+            - ./bin/terraform_apply.sh staging
+      # production account apply
+      - step:
+          name: terraform apply Production
+          trigger: manual
+          script:
+            - ./bin/terraform_apply.sh production
+    
+    #
+    # Individual accounts
+    #
+
+    # master account
+    master:
+      - step:
+          name: terraform plan Master
+          script:
+            - ./bin/terraform_plan.sh master
+          artifacts:
+            - terraform/accounts/master/.terraform/**
+            - terraform/terraform_plan/**
+      - step:
+          name: terraform apply Master
+          trigger: manual
+          script:
+            - ./bin/terraform_apply.sh master
+
+    # shared services account
+    shared-services:
+      - step:
+          name: terraform plan Shared Services
+          script:
+            - ./bin/terraform_plan.sh shared_services
+          artifacts:
+            - terraform/accounts/shared_services/.terraform/**
+            - terraform/terraform_plan/**
+      - step:
+          name: terraform apply Shared Services
+          trigger: manual
+          script:
+            - ./bin/terraform_apply.sh shared_services
+    
+    # qa account
+    qa:
+      - step:
+          name: terraform plan QA
+          script:
+            - ./bin/terraform_plan.sh qa
+          artifacts:
+            - terraform/accounts/qa/.terraform/**
+            - terraform/terraform_plan/**
+      - step:
+          name: terraform apply QA
+          trigger: manual
+          script:
+            - ./bin/terraform_apply.sh qa
+    
+    # staging account
+    staging:
+      - step:
+          name: terraform plan Staging
+          script:
+            - ./bin/terraform_plan.sh staging
+          artifacts:
+            - terraform/accounts/staging/.terraform/**
+            - terraform/terraform_plan/**
+      - step:
+          name: terraform apply Staging
+          trigger: manual
+          script:
+            - ./bin/terraform_apply.sh staging
+  
+    # production account
+    production:
+      - step:
+          name: terraform plan Production
+          script:
+            - ./bin/terraform_plan.sh production
+          artifacts:
+            - terraform/accounts/production/.terraform/**
+            - terraform/terraform_plan/**
+      - step:
+          name: terraform apply Production
+          trigger: manual
+          script:
+            - ./bin/terraform_apply.sh production
+  

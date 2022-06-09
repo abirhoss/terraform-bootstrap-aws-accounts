@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  aws-accounts:
+    container_name: aws-accounts
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dev
+      args:
+        AWS_CLI_VERSION: $AWS_CLI_VERSION
+    volumes:
+      - .:/aws-accounts
+    env_file:
+      - .env
+    entrypoint: docker/entrypoint.sh
